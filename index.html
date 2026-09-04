@@ -341,8 +341,6 @@
   <div class="footer-note">Código de Ética · Regimento Interno · Política de Integridade</div>
 </div>
 
-<iframe name="hidden_iframe" id="hiddenIframe" style="display:none;"></iframe>
-
 <script>
   const questions = [
     {
@@ -528,29 +526,22 @@
     loadQuestion();
   });
 
+  // Função atualizada para enviar com fetch (modo no-cors)
   function enviarResultado() {
-    const form = document.createElement('form');
-    form.action = GOOGLE_FORM_ACTION;
-    form.method = 'POST';
-    form.target = 'hidden_iframe';
+    const formData = new FormData();
+    formData.append(ENTRY_NOME, nomeColaborador);
+    formData.append(ENTRY_OBRA, obraColaborador);
+    formData.append(ENTRY_PONTUACAO, score + ' / ' + questions.length);
 
-    const fields = {
-      [ENTRY_NOME]: nomeColaborador,
-      [ENTRY_OBRA]: obraColaborador,
-      [ENTRY_PONTUACAO]: score + ' / ' + questions.length
-    };
-
-    Object.keys(fields).forEach((key) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = fields[key];
-      form.appendChild(input);
+    fetch(GOOGLE_FORM_ACTION, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    }).then(() => {
+      console.log('Resposta enviada para o Google Forms com sucesso!');
+    }).catch((error) => {
+      console.error('Erro ao enviar:', error);
     });
-
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
   }
 
   function loadQuestion() {
