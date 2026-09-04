@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ética e Integridade nas Obras | HECA</title>
+<style>
+  :root {
+    --azul-escuro: #0A2A52;
+    --azul-escuro-2: #0E3868;
+    --azul-claro: #4FA8E0;
+    --azul-claro-suave: #E8F3FC;
+    --branco: #FFFFFF;
+    --verde: #1E8A5F;
+    --vermelho: #C0392B;
+    --cinza-texto: #4A5568;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Euclid Circular A', 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    background: var(--azul-escuro);
+    color: var(--azul-escuro);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .header {
+    text-align: left;
+    color: var(--branco);
+    margin-bottom: 18px;
+    padding: 0 4px;
+  }
+
+  .header .eyebrow {
+    font-size: 13px;
+    color: var(--azul-claro);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .header h1 {
+    font-family: 'Plena Medium', 'Euclid Circular A', Georgia, serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.25;
+    margin-top: 4px;
+  }
+
+  .card {
+    background: var(--branco);
+    border-radius: 18px;
+    padding: 24px 20px 20px;
+    box-shadow: 0 12px 32px rgba(10, 42, 82, 0.35);
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--azul-claro-suave);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--azul-claro);
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+
+  .progress-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cinza-texto);
+    white-space: nowrap;
+  }
+
+  .question-text {
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--azul-escuro);
+    margin-bottom: 20px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    text-align: left;
+    border: 1.5px solid #D8E3EE;
+    background: var(--branco);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 16px;
+    color: var(--azul-escuro);
+    cursor: pointer;
+    line-height: 1.4;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .option:active {
+    background: var(--azul-claro-suave);
+  }
+
+  .option.correct {
+    border-color: var(--verde);
+    background: #EAF7F0;
+    color: var(--verde);
+    font-weight: 600;
+  }
+
+  .option.incorrect {
+    border-color: var(--vermelho);
+    background: #FBEAE8;
+    color: var(--vermelho);
+    font-weight: 600;
+  }
+
+  .option[disabled] {
+    cursor: default;
+  }
+
+  .explanation {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--azul-claro-suave);
+    border-left: 4px solid var(--azul-claro);
+    border-radius: 8px;
+    font-size: 14.5px;
+    color: var(--cinza-texto);
+    line-height: 1.5;
+  }
+
+  .explanation.show { display: block; }
+
+  .next-btn {
+    display: none;
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: var(--azul-escuro);
+    color: var(--branco);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .next-btn.show { display: block; }
+
+  .result-screen {
+    display: none;
+    text-align: center;
+  }
+
+  .result-screen.show { display: block; }
+
+  .quiz-screen.hide { display: none; }
+
+  .result-score {
+    font-family: 'Plena Medium', 'Euclid Circular A', Georgia, serif;
+    font-size: 52px;
+    font-weight: 600;
+    color: var(--azul-escuro);
+    margin: 8px 0 4px;
+  }
+
+  .result-score span {
+    font-size: 22px;
+    color: var(--cinza-texto);
+    font-weight: 500;
+  }
+
+  .result-message {
+    font-size: 16px;
+    color: var(--cinza-texto);
+    margin-bottom: 22px;
+    line-height: 1.5;
+    padding: 0 8px;
+  }
+
+  .result-icon {
+    font-size: 40px;
+    margin-bottom: 6px;
+  }
+
+  .restart-btn {
+    width: 100%;
+    padding: 14px;
+    border: 1.5px solid var(--azul-escuro);
+    border-radius: 12px;
+    background: var(--branco);
+    color: var(--azul-escuro);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .intro-screen { display: block; }
+  .intro-screen.hide { display: none; }
+
+  .intro-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--azul-escuro);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .intro-input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1.5px solid #D8E3EE;
+    border-radius: 12px;
+    font-size: 16px;
+    color: var(--azul-escuro);
+    margin-bottom: 18px;
+    font-family: inherit;
+  }
+
+  .intro-input:focus {
+    outline: none;
+    border-color: var(--azul-claro);
+  }
+
+  .intro-intro-text {
+    font-size: 14.5px;
+    color: var(--cinza-texto);
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+
+  .start-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: var(--azul-escuro);
+    color: var(--branco);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .start-btn[disabled] {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .intro-error {
+    display: none;
+    color: var(--vermelho);
+    font-size: 13.5px;
+    margin: -10px 0 14px;
+  }
+
+  .intro-error.show { display: block; }
+
+  .footer-note {
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    margin-top: 16px;
+    padding: 0 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="eyebrow">HECA · Grupo Heca</div>
+    <h1>Ética e Integridade nas Obras</h1>
+  </div>
+
+  <div class="card">
+
+    <div class="intro-screen" id="introScreen">
+      <div class="intro-intro-text">Antes de começar, informe seus dados. Isso ajuda a HECA a acompanhar quem já fez o treinamento.</div>
+
+      <label class="intro-label" for="inputNome">Nome completo</label>
+      <input class="intro-input" type="text" id="inputNome" placeholder="Digite seu nome completo">
+
+      <label class="intro-label" for="inputObra">Obra / Setor</label>
+      <input class="intro-input" type="text" id="inputObra" placeholder="Ex: Obra Jardins, RH, Financeiro">
+
+      <div class="intro-error" id="introError">Preencha os dois campos para começar.</div>
+
+      <button class="start-btn" id="startBtn">Começar o quiz</button>
+    </div>
+
+    <div class="quiz-screen hide" id="quizScreen">
+      <div class="progress-row">
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-label" id="progressLabel">1 / 12</div>
+      </div>
+
+      <div class="question-text" id="questionText"></div>
+
+      <div class="options" id="optionsContainer"></div>
+
+      <div class="explanation" id="explanation"></div>
+
+      <button class="next-btn" id="nextBtn">Próxima pergunta</button>
+    </div>
+
+    <div class="result-screen" id="resultScreen">
+      <div class="result-icon" id="resultIcon">🎯</div>
+      <div class="result-score"><span id="resultScoreNum">0</span><span> / 12 acertos</span></div>
+      <div class="result-message" id="resultMessage"></div>
+      <button class="restart-btn" id="restartBtn">Refazer o quiz</button>
+    </div>
+
+  </div>
+
+  <div class="footer-note">Código de Ética · Regimento Interno · Política de Integridade</div>
+</div>
+
+<iframe name="hidden_iframe" id="hiddenIframe" style="display:none;"></iframe>
+
+<script>
+  const questions = [
+    {
+      q: "Nas obras, o que é obrigatório usar durante toda a jornada de trabalho?",
+      options: [
+        "Apenas o crachá",
+        "Roupas próprias, sem exigência",
+        "Uniforme e EPI (Equipamento de Proteção Individual)",
+        "Só é obrigatório em dias de fiscalização"
+      ],
+      correct: 2,
+      explanation: "O uso de uniforme e EPI é obrigatório durante toda a jornada, em qualquer dia, com ou sem fiscalização — é uma questão de segurança, não de aparência."
+    },
+    {
+      q: "Qual é o valor máximo de presentes que um colaborador pode receber de fornecedores ou parceiros?",
+      options: [
+        "Não há limite, desde que declarado depois",
+        "Até R$ 100",
+        "Até R$ 500",
+        "Presentes são proibidos em qualquer valor"
+      ],
+      correct: 1,
+      explanation: "A Política de Integridade define R$ 100 como limite para presentes institucionais. Acima disso, o presente deve ser recusado ou formalmente comunicado."
+    },
+    {
+      q: "Um colaborador presencia uma conduta antiética na obra. O que ele deve fazer?",
+      options: [
+        "Ignorar, para não se envolver",
+        "Resolver sozinho, direto com o colega",
+        "Registrar no canal de denúncias, que é anônimo e confidencial",
+        "Só pode informar se tiver provas concretas por escrito"
+      ],
+      correct: 2,
+      explanation: "O canal de denúncias existe justamente para isso: é anônimo, confidencial e protege quem denuncia de retaliação."
+    },
+    {
+      q: "O uso de celular é permitido durante a operação de máquinas e em áreas de risco?",
+      options: [
+        "Sim, sempre",
+        "Não, é proibido por segurança",
+        "Só para ligações urgentes",
+        "Só supervisores podem usar"
+      ],
+      correct: 1,
+      explanation: "Em áreas de risco e durante a operação de máquinas, o celular distrai e pode causar acidentes graves — o uso é proibido nesses momentos."
+    },
+    {
+      q: "Publicar fotos da obra em redes sociais pessoais é permitido?",
+      options: [
+        "Sim, livremente",
+        "Não, sem autorização, por questões de segurança e imagem da empresa",
+        "Só fotos de paisagem",
+        "Só se marcar a empresa na publicação"
+      ],
+      correct: 1,
+      explanation: "Fotos da obra podem expor informações sensíveis, colegas e riscos de segurança. Sem autorização, a publicação não é permitida."
+    },
+    {
+      q: "Contratar um fornecedor que é parente próximo do colaborador responsável pela contratação é um exemplo de:",
+      options: [
+        "Boa prática de confiança",
+        "Conflito de interesses, que deve ser declarado",
+        "Economia para a empresa",
+        "Prática recomendada, se o preço for competitivo"
+      ],
+      correct: 1,
+      explanation: "Sempre que houver relação pessoal ou familiar envolvida em uma decisão de negócio, é um conflito de interesses e precisa ser declarado antecipadamente."
+    },
+    {
+      q: "Qual das opções abaixo é considerada uma conduta inaceitável pelo Código de Ética?",
+      options: [
+        "Cumprir os horários da obra",
+        "Assédio moral ou discriminação de qualquer tipo",
+        "Usar corretamente o EPI",
+        "Reportar problemas ao supervisor"
+      ],
+      correct: 1,
+      explanation: "Assédio moral, sexual e qualquer forma de discriminação são condutas inaceitáveis e passíveis de medidas disciplinares."
+    },
+    {
+      q: "O que pode acontecer com um colaborador que descumprir o Código de Ética?",
+      options: [
+        "Nada, é apenas um documento informativo",
+        "Advertência, suspensão ou até desligamento, conforme a gravidade",
+        "Apenas uma conversa informal, sem registro",
+        "Multa financeira descontada do salário"
+      ],
+      correct: 1,
+      explanation: "As medidas disciplinares seguem o Regimento Interno e variam conforme a gravidade: advertência, suspensão ou desligamento."
+    },
+    {
+      q: "Qual é a postura da HECA em relação a trabalho infantil ou forçado, inclusive na cadeia de fornecedores?",
+      options: [
+        "Depende da região da obra",
+        "Zero tolerância, é expressamente proibido",
+        "É permitido para maiores de 14 anos",
+        "É permitido com autorização dos pais"
+      ],
+      correct: 1,
+      explanation: "A HECA tem zero tolerância com trabalho infantil e trabalho forçado, tanto internamente quanto entre fornecedores e parceiros."
+    },
+    {
+      q: "Quem é responsável por avaliar denúncias e casos de violação de integridade na HECA?",
+      options: [
+        "O encarregado da obra, sozinho",
+        "O Comitê de Integridade",
+        "Não existe um responsável formal",
+        "Cada colaborador decide por conta própria"
+      ],
+      correct: 1,
+      explanation: "O Comitê de Integridade é o órgão formal responsável por avaliar denúncias e conduzir os casos com imparcialidade."
+    },
+    {
+      q: "Ao lidar com agentes públicos (fiscais, prefeitura, etc.), o colaborador deve:",
+      options: [
+        "Oferecer facilidades para agilizar processos",
+        "Agir com transparência e nunca oferecer vantagens indevidas",
+        "Resolver tudo informalmente, sempre que possível",
+        "Evitar qualquer contato, mesmo quando necessário"
+      ],
+      correct: 1,
+      explanation: "A relação com o setor público deve ser sempre transparente e formal, sem oferecer vantagens indevidas a agentes públicos."
+    },
+    {
+      q: "Segundo o Regimento Interno, o que deve ser feito em caso de falta ao trabalho?",
+      options: [
+        "Não precisa avisar ninguém",
+        "Comunicar e justificar ao supervisor, conforme as regras da empresa",
+        "Só avisar se a falta passar de 3 dias",
+        "Pode pedir a um colega para substituir sem informar ninguém"
+      ],
+      correct: 1,
+      explanation: "Toda ausência deve ser comunicada e justificada ao supervisor, seguindo o que está previsto no Regimento Interno."
+    }
+  ];
+
+  // Configuração do Google Forms usado como planilha de resultados
+  const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSfekRwMspKjPjrDqB9iEN-EBideAjbxXCn1EV7vNIPxbTaGEA/formResponse";
+  const ENTRY_NOME = "entry.197024251";
+  const ENTRY_OBRA = "entry.1407908180";
+  const ENTRY_PONTUACAO = "entry.336692691";
+
+  let current = 0;
+  let score = 0;
+  let answered = false;
+  let nomeColaborador = "";
+  let obraColaborador = "";
+
+  const introScreen = document.getElementById('introScreen');
+  const inputNome = document.getElementById('inputNome');
+  const inputObra = document.getElementById('inputObra');
+  const introError = document.getElementById('introError');
+  const startBtn = document.getElementById('startBtn');
+
+  const questionText = document.getElementById('questionText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const explanation = document.getElementById('explanation');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressFill = document.getElementById('progressFill');
+  const progressLabel = document.getElementById('progressLabel');
+  const quizScreen = document.getElementById('quizScreen');
+  const resultScreen = document.getElementById('resultScreen');
+  const resultScoreNum = document.getElementById('resultScoreNum');
+  const resultMessage = document.getElementById('resultMessage');
+  const resultIcon = document.getElementById('resultIcon');
+  const restartBtn = document.getElementById('restartBtn');
+
+  startBtn.addEventListener('click', () => {
+    const nome = inputNome.value.trim();
+    const obra = inputObra.value.trim();
+
+    if (!nome || !obra) {
+      introError.classList.add('show');
+      return;
+    }
+
+    introError.classList.remove('show');
+    nomeColaborador = nome;
+    obraColaborador = obra;
+
+    introScreen.classList.add('hide');
+    quizScreen.classList.remove('hide');
+    loadQuestion();
+  });
+
+  function enviarResultado() {
+    const form = document.createElement('form');
+    form.action = GOOGLE_FORM_ACTION;
+    form.method = 'POST';
+    form.target = 'hidden_iframe';
+
+    const fields = {
+      [ENTRY_NOME]: nomeColaborador,
+      [ENTRY_OBRA]: obraColaborador,
+      [ENTRY_PONTUACAO]: score + ' / ' + questions.length
+    };
+
+    Object.keys(fields).forEach((key) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = fields[key];
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  }
+
+  function loadQuestion() {
+    answered = false;
+    const item = questions[current];
+    questionText.textContent = item.q;
+    optionsContainer.innerHTML = '';
+    explanation.classList.remove('show');
+    explanation.textContent = '';
+    nextBtn.classList.remove('show');
+
+    item.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => selectOption(idx));
+      optionsContainer.appendChild(btn);
+    });
+
+    progressFill.style.width = ((current) / questions.length * 100) + '%';
+    progressLabel.textContent = (current + 1) + ' / ' + questions.length;
+  }
+
+  function selectOption(idx) {
+    if (answered) return;
+    answered = true;
+    const item = questions[current];
+    const buttons = optionsContainer.querySelectorAll('.option');
+
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === item.correct) btn.classList.add('correct');
+      else if (i === idx) btn.classList.add('incorrect');
+    });
+
+    if (idx === item.correct) score++;
+
+    explanation.textContent = item.explanation;
+    explanation.classList.add('show');
+    nextBtn.classList.add('show');
+    nextBtn.textContent = current === questions.length - 1 ? 'Ver resultado' : 'Próxima pergunta';
+    progressFill.style.width = ((current + 1) / questions.length * 100) + '%';
+  }
+
+  nextBtn.addEventListener('click', () => {
+    current++;
+    if (current < questions.length) {
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  });
+
+  function showResult() {
+    quizScreen.classList.add('hide');
+    resultScreen.classList.add('show');
+    resultScoreNum.textContent = score;
+
+    enviarResultado();
+
+    const pct = score / questions.length;
+    if (pct === 1) {
+      resultIcon.textContent = '🏆';
+      resultMessage.textContent = 'Excelente! Você acertou todas as perguntas e demonstra domínio total do Código de Ética, Regimento Interno e Política de Integridade.';
+    } else if (pct >= 0.75) {
+      resultIcon.textContent = '👏';
+      resultMessage.textContent = 'Muito bom! Você conhece bem as regras da obra. Vale revisar os pontos que errou com seu encarregado.';
+    } else if (pct >= 0.5) {
+      resultIcon.textContent = '📘';
+      resultMessage.textContent = 'Você está no caminho certo, mas ainda há pontos importantes para revisar. Converse com seu encarregado sobre as perguntas que errou.';
+    } else {
+      resultIcon.textContent = '⚠️';
+      resultMessage.textContent = 'É importante reforçar esse conteúdo. Procure seu encarregado ou o RH para revisar o Código de Ética, o Regimento Interno e a Política de Integridade.';
+    }
+  }
+
+  restartBtn.addEventListener('click', () => {
+    current = 0;
+    score = 0;
+    inputNome.value = '';
+    inputObra.value = '';
+    resultScreen.classList.remove('show');
+    introScreen.classList.remove('hide');
+  });
+</script>
+
+</body>
+</html>
